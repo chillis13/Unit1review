@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unit 1 Review: From Cave Walls to Careers</title>
+<style>
+  :root{
+    --ink:#1B1D2A;
+    --paper:#F4EFE3;
+    --paper-2:#EDE6D6;
+    --a:#B5652D;
+    --b:#2B4570;
+    --c:#C9A227;
+    --d:#C6362F;
+    --e:#16A3A0;
+    --good:#3B7A3E;
+    --good-bg:#E4F0E1;
+    --bad:#B5372F;
+    --bad-bg:#F8E5E3;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--ink);
+    font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);
+    line-height:1.5;
+  }
+  .app{max-width:760px;margin:0 auto;background:var(--paper);min-height:100vh;}
+
+  /* ---------- Top bar / progress ---------- */
+  .topbar{
+    background:var(--ink);
+    color:var(--paper);
+    padding:20px 28px;
+    position:sticky;
+    top:0;
+    z-index:10;
+  }
+  .topbar h1{font-size:19px;margin:0 0 2px;font-weight:600;}
+  .topbar .sub{font-size:12.5px;color:#B7BFD9;margin:0;}
+  .progress-track{margin-top:14px;height:8px;background:#333650;border-radius:99px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--e);border-radius:99px;transition:width .35s ease;width:0%;}
+  .dots{display:flex;gap:6px;margin-top:10px;}
+  .dot{flex:1;height:4px;border-radius:4px;background:#333650;}
+  .dot.active{background:var(--e);}
+  .dot.done{background:#7fd6d3;}
+
+  main{padding:24px 28px 60px;}
+  .screen{display:none;}
+  .screen.visible{display:block;animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  h2.section-title{font-size:21px;margin:0 0 4px;}
+  .criterion-tag{
+    display:inline-block;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.02em;
+    color:#fff;
+    padding:4px 10px;
+    border-radius:99px;
+    margin-bottom:12px;
+  }
+  p.help{color:#5c5b52;font-size:14.5px;}
+
+  /* ---------- Cards / boxes ---------- */
+  .card{
+    background:var(--paper-2);
+    border-radius:12px;
+    padding:18px 20px;
+    margin-bottom:16px;
+  }
+  .card.start-card{background:#fff;border:1px solid #ddd6c4;}
+  ul.direction-list{margin:8px 0 0;padding-left:20px;font-size:14.5px;}
+  ul.direction-list li{margin-bottom:6px;}
+  .notice{
+    border-left:4px solid var(--d);
+    background:#FCEBEB;
+    padding:12px 16px;
+    border-radius:0 8px 8px 0;
+    font-size:13.5px;
+    margin-top:14px;
+  }
+  .lt-box{
+    background:#fff;
+    border:1px solid #ddd6c4;
+    border-radius:12px;
+    padding:18px 20px;
+    margin-bottom:18px;
+  }
+  .lt-box .lt-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#8a8874;margin-bottom:6px;}
+  .lt-box p{margin:0;font-size:16px;}
+  .lt-box .sc-list{margin:14px 0 0;padding:0;list-style:none;}
+  .lt-box .sc-list li{
+    display:flex;gap:10px;align-items:flex-start;
+    font-size:14px;margin-bottom:8px;padding:8px 10px;border-radius:8px;background:var(--paper-2);
+  }
+  .lt-box .sc-num{
+    flex-shrink:0;width:20px;height:20px;border-radius:50%;
+    color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  }
+
+  /* ---------- Question blocks ---------- */
+  .q{margin-bottom:22px;}
+  .q-text{font-size:15.5px;font-weight:600;margin-bottom:10px;}
+  .options{display:flex;flex-direction:column;gap:8px;}
+  .opt{
+    display:flex;align-items:center;gap:10px;
+    background:#fff;border:1.5px solid #ddd6c4;border-radius:8px;
+    padding:11px 14px;cursor:pointer;font-size:14.5px;
+    transition:border-color .15s, background .15s;
+  }
+  .opt:hover{border-color:#b9b096;}
+  .opt input{accent-color:var(--ink);width:16px;height:16px;flex-shrink:0;}
+  .opt.correct{background:var(--good-bg);border-color:var(--good);}
+  .opt.incorrect{background:var(--bad-bg);border-color:var(--bad);}
+  .feedback{
+    display:none;
+    margin-top:10px;font-size:13.5px;padding:10px 14px;border-radius:8px;
+  }
+  .feedback.show{display:block;}
+  .feedback.good{background:var(--good-bg);color:var(--good);}
+  .feedback.bad{background:var(--bad-bg);color:var(--bad);}
+
+  button{
+    font-family:inherit;cursor:pointer;border:none;border-radius:8px;
+    font-size:14.5px;font-weight:600;padding:11px 20px;
+  }
+  button:focus-visible, .opt:focus-within, .tile:focus-visible{outline:3px solid var(--e);outline-offset:2px;}
+  .btn-primary{background:var(--ink);color:var(--paper);}
+  .btn-primary:hover{background:#30324a;}
+  .btn-primary:disabled{background:#b8b7ac;cursor:not-allowed;}
+  .btn-secondary{background:transparent;color:var(--ink);border:1.5px solid var(--ink);}
+  .btn-check{background:var(--e);color:#03332f;}
+  .nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:28px;gap:12px;}
+
+  /* ---------- Sequencing & matching tiles ---------- */
+  .tile-grid{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+  .tile{
+    background:#fff;border:1.5px solid #ddd6c4;border-radius:8px;
+    padding:12px 16px;font-size:14.5px;font-weight:600;cursor:pointer;
+    transition:transform .1s, background .15s, border-color .15s;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+  }
+  .tile:hover{border-color:#b9b096;}
+  .tile.locked{background:var(--good-bg);border-color:var(--good);color:var(--good);cursor:default;}
+  .tile.shake{animation:shake .3s;background:var(--bad-bg);border-color:var(--bad);}
+  @keyframes shake{25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
+  .tile .tile-note{font-size:12px;font-weight:400;color:#8a8874;}
+  .tile.locked .tile-note{color:var(--good);}
+  .tile.seq-tile{flex-direction:column;align-items:flex-start;gap:2px;}
+  .tile.seq-tile .tile-main{display:flex;justify-content:space-between;align-items:center;width:100%;}
+  .tile.seq-tile .tile-desc{font-size:12.5px;font-weight:400;color:#6b6a5f;text-align:left;}
+  .tile.seq-tile.locked .tile-desc{color:var(--good);}
+  .sequence-slot{
+    display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 18px;
+  }
+  .slot{
+    width:30px;height:30px;border-radius:50%;background:var(--paper-2);
+    display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#8a8874;
+    border:1.5px dashed #c9c2ad;
+  }
+  .slot.filled{background:var(--ink);color:var(--paper);border-style:solid;border-color:var(--ink);}
+
+  .match-cols{display:flex;gap:16px;}
+  .match-col{flex:1;display:flex;flex-direction:column;gap:8px;}
+  .match-col .tile{font-weight:500;font-size:13.5px;}
+  .tile.selected{border-color:var(--e);box-shadow:0 0 0 2px var(--e) inset;}
+
+  /* ---------- Reflection ---------- */
+  textarea{
+    width:100%;min-height:120px;border:1.5px solid #ddd6c4;border-radius:8px;
+    padding:12px 14px;font-family:inherit;font-size:14.5px;resize:vertical;
+  }
+  .starters{font-size:13px;color:#6b6a5f;background:var(--paper-2);border-radius:8px;padding:12px 14px;margin-bottom:12px;}
+  .starters code{background:#fff;padding:1px 5px;border-radius:4px;}
+
+  /* ---------- Final screen ---------- */
+  .score-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+  .score-card{background:#fff;border:1px solid #ddd6c4;border-radius:10px;padding:14px 16px;}
+  .score-card .num{font-size:24px;font-weight:700;}
+  .score-card .lbl{font-size:12.5px;color:#8a8874;}
+  .checklist label{
+    display:flex;align-items:flex-start;gap:10px;background:#fff;border:1px solid #ddd6c4;
+    border-radius:8px;padding:12px 14px;margin-bottom:8px;font-size:14px;cursor:pointer;
+  }
+  .checklist input{margin-top:3px;width:16px;height:16px;flex-shrink:0;}
+  .next-note{background:var(--paper-2);border-radius:10px;padding:16px 18px;font-size:14.5px;margin-top:16px;}
+  .name-row{display:flex;gap:12px;margin-bottom:6px;flex-wrap:wrap;}
+  .name-row .field{flex:1;min-width:160px;}
+  .name-row label{display:block;font-size:12.5px;font-weight:600;color:#5c5b52;margin-bottom:4px;}
+  .name-row input[type="text"]{
+    width:100%;border:1.5px solid #ddd6c4;border-radius:8px;padding:9px 12px;font-family:inherit;font-size:14.5px;
+  }
+  .field-error{font-size:13px;color:var(--bad);display:none;margin-top:6px;}
+  .submit-box{
+    background:#fff;border:1px solid #ddd6c4;border-radius:12px;padding:18px 20px;margin-top:20px;
+  }
+  .submit-status{font-size:13.5px;margin-top:10px;display:none;}
+  .submit-status.good{color:var(--good);display:block;}
+  .submit-status.bad{color:var(--bad);display:block;}
+  .submit-status.pending{color:#8a8874;display:block;}
+  .btn-primary:disabled + .submit-status{margin-top:10px;}
+  .copy-row{display:flex;gap:10px;align-items:center;margin-top:10px;}
+  .copy-msg{font-size:13px;color:var(--good);display:none;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <h1>Unit 1 review: from cave walls to careers</h1>
+    <p class="sub">Section <span id="stepLabel">1</span> of 6</p>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <main>
+
+    <!-- ================= SCREEN 0: START ================= -->
+    <section class="screen visible" data-screen="0">
+      <div class="card start-card">
+        <div class="name-row">
+          <div class="field">
+            <label for="studentName">Your name *</label>
+            <input type="text" id="studentName" placeholder="First and last name">
+          </div>
+          <div class="field">
+            <label for="studentPeriod">Period (optional)</label>
+            <input type="text" id="studentPeriod" placeholder="e.g. 3rd period">
+          </div>
+        </div>
+        <p class="field-error" id="nameError">Enter your name before starting — it's how your results get recorded.</p>
+      </div>
+
+      <div class="lt-box">
+        <div class="lt-label">Learning target</div>
+        <p><em>I am learning about</em> <strong>the earliest forms of visual communication and how design history connects to careers today</strong> <em>so that</em> <strong>I can explain how the past still shapes the design work people do now.</strong></p>
+        <ul class="sc-list">
+          <li><span class="sc-num" style="background:var(--a)">1</span><span>I can identify early forms of visual communication and explain their basic characteristics.</span></li>
+          <li><span class="sc-num" style="background:var(--b)">2</span><span>I can sequence major developments in graphic design history in chronological order.</span></li>
+          <li><span class="sc-num" style="background:var(--c)">3</span><span>I can connect historical design developments to specific graphic design careers today.</span></li>
+          <li><span class="sc-num" style="background:var(--d)">4</span><span>I can justify how a specific historical era or invention influenced a graphic design career of my choice.</span></li>
+        </ul>
+      </div>
+
+      <div class="card start-card">
+        <strong>Working on this independently today</strong>
+        <ul class="direction-list">
+          <li>Go through the sections in order — each one gets a little more challenging, and later sections build on earlier ones.</li>
+          <li>Answer each question, then check it. You'll get feedback right away, so you always know how you're doing.</li>
+          <li>Keep your Unit 1 handout and timeline infographic nearby — you're welcome to use them.</li>
+          <li>Section 4 is a written reflection. Use the sentence starters — it gets included automatically when you submit your results at the end.</li>
+          <li>Be <strong>resourceful</strong>: if you get stuck, re-read the question, check your notes, and try again before raising your hand.</li>
+        </ul>
+        <div class="notice">
+          <strong>Viewing this in Google Classroom?</strong> If the buttons don't respond, open this file in a new browser tab (⋮ menu → Open in new window, or download it and open it) rather than using the inline preview — the activity needs to run in a full browser tab to work.
+        </div>
+      </div>
+
+      <div class="nav-row" style="justify-content:flex-end;">
+        <button class="btn-primary" onclick="startReview()">Start the review &rarr;</button>
+      </div>
+    </section>
+
+    <!-- ================= SCREEN 1: SC1 - IDENTIFY ================= -->
+    <section class="screen" data-screen="1">
+      <span class="criterion-tag" style="background:var(--a)">Success criterion 1 &middot; Identify</span>
+      <h2 class="section-title">Cave paintings &amp; cuneiform</h2>
+      <p class="help">Answer each question, then tap "Check answer."</p>
+
+      <div class="q" data-q="q1">
+        <p class="q-text">1. What material were cuneiform symbols most commonly written on?</p>
+        <div class="options">
+          <label class="opt"><input type="radio" name="q1" value="0">Papyrus scrolls</label>
+          <label class="opt"><input type="radio" name="q1" value="1">Clay tablets</label>
+          <label class="opt"><input type="radio" name="q1" value="2">Wood panels</label>
+          <label class="opt"><input type="radio" name="q1" value="3">Cotton paper</label>
+        </div>
+        <button class="btn-check" onclick="checkMC('q1', 1)">Check answer</button>
+        <div class="feedback" id="fb-q1"></div>
+      </div>
+
+      <div class="q" data-q="q2">
+        <p class="q-text">2. Cave paintings, like those at Lascaux, were created using which of these?</p>
+        <div class="options">
+          <label class="opt"><input type="radio" name="q2" value="0">Digital projection</label>
+          <label class="opt"><input type="radio" name="q2" value="1">Mineral pigments and natural dyes</label>
+          <label class="opt"><input type="radio" name="q2" value="2">Printing presses</label>
+          <label class="opt"><input type="radio" name="q2" value="3">Movable type</label>
+        </div>
+        <button class="btn-check" onclick="checkMC('q2', 1)">Check answer</button>
+        <div class="feedback" id="fb-q2"></div>
+      </div>
+
+      <div class="q" data-q="q3">
+        <p class="q-text">3. True or false: cuneiform writing developed <em>before</em> cave paintings.</p>
+        <div class="options">
+          <label class="opt"><input type="radio" name="q3" value="0">True</label>
+          <label class="opt"><input type="radio" name="q3" value="1">False</label>
+        </div>
+        <button class="btn-check" onclick="checkMC('q3', 1)">Check answer</button>
+        <div class="feedback" id="fb-q3"></div>
+      </div>
+
+      <div class="q" data-q="q4">
+        <p class="q-text">4. As far as historians can tell, what was the main purpose of most early cave paintings?</p>
+        <div class="options">
+          <label class="opt"><input type="radio" name="q4" value="0">Advertising goods for trade</label>
+          <label class="opt"><input type="radio" name="q4" value="1">Recording business transactions</label>
+          <label class="opt"><input type="radio" name="q4" value="2">Storytelling, ritual, and recording events</label>
+          <label class="opt"><input type="radio" name="q4" value="3">Teaching written language</label>
+        </div>
+        <button class="btn-check" onclick="checkMC('q4', 2)">Check answer</button>
+        <div class="feedback" id="fb-q4"></div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-secondary" onclick="goTo(0)">&larr; Back</button>
+        <button class="btn-primary" onclick="goTo(2)">Next section &rarr;</button>
+      </div>
+    </section>
+
+    <!-- ================= SCREEN 2: SC2 - SEQUENCE ================= -->
+    <section class="screen" data-screen="2">
+      <span class="criterion-tag" style="background:var(--b)">Success criterion 2 &middot; Sequence</span>
+      <h2 class="section-title">Put the eras in order</h2>
+      <p class="help">Tap the tiles below in chronological order, earliest to latest. A correct tap turns green and joins the sequence; an incorrect tap will shake — just try again.</p>
+
+      <div class="sequence-slot" id="seqSlots"></div>
+      <div class="tile-grid" id="seqTiles"></div>
+      <p class="help" id="seqStatus" style="font-weight:600;"></p>
+
+      <div class="nav-row">
+        <button class="btn-secondary" onclick="goTo(1)">&larr; Back</button>
+        <button class="btn-primary" id="seqNextBtn" onclick="goTo(3)" disabled>Next section &rarr;</button>
+      </div>
+    </section>
+
+    <!-- ================= SCREEN 3: SC3 - CONNECT ================= -->
+    <section class="screen" data-screen="3">
+      <span class="criterion-tag" style="background:var(--c)">Success criterion 3 &middot; Connect</span>
+      <h2 class="section-title">Design careers, then and now</h2>
+      <p class="help">Part A: match each career to its description. Tap a career, then tap the description that fits.</p>
+
+      <div class="match-cols">
+        <div class="match-col" id="careerCol"></div>
+        <div class="match-col" id="descCol"></div>
+      </div>
+      <p class="help" id="matchStatus" style="font-weight:600;margin-top:10px;"></p>
+
+      <p class="help" style="margin-top:24px;"><strong>Part B:</strong> connect each career to the era that shaped it.</p>
+
+      <div class="q" data-q="q5">
+        <p class="q-text">5. Which era's innovations most directly enabled UX/UI design as a career?</p>
+        <div class="options">
+          <label class="opt"><input type="radio" name="q5" value="0">Origins of Written &amp; Printed Communication</label>
+          <label class="opt"><input type="radio" name="q5" value="1">Art Movements Emerge</label>
+          <label class="opt"><input type="radio" name="q5" value="2">The Digital Revolution to Today</label>
+        </div>
+        <button class="btn-check" onclick="checkMC('q5', 2)">Check answer</button>
+        <div class="feedback" id="fb-q5"></div>
+      </div>
+
+      <div class="q" data-q="q6">
+        <p class="q-text">6. Careers like editorial or publication design owe their foundation most to which era?</p>
+        <div class="options">
+          <label class="opt"><input type="radio" name="q6" value="0">Origins of Written &amp; Printed Communication</label>
+          <label class="opt"><input type="radio" name="q6" value="1">Modernism to Mid-Century Design</label>
+          <label class="opt"><input type="radio" name="q6" value="2">The Digital Revolution to Today</label>
+        </div>
+        <button class="btn-check" onclick="checkMC('q6', 0)">Check answer</button>
+        <div class="feedback" id="fb-q6"></div>
+      </div>
+
+      <div class="q" data-q="q7">
+        <p class="q-text">7. A muralist or illustrator today continues a visual tradition that traces back furthest to&hellip;</p>
+        <div class="options">
+          <label class="opt"><input type="radio" name="q7" value="0">Cave paintings</label>
+          <label class="opt"><input type="radio" name="q7" value="1">Cuneiform writing</label>
+          <label class="opt"><input type="radio" name="q7" value="2">Adobe Photoshop</label>
+        </div>
+        <button class="btn-check" onclick="checkMC('q7', 0)">Check answer</button>
+        <div class="feedback" id="fb-q7"></div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-secondary" onclick="goTo(2)">&larr; Back</button>
+        <button class="btn-primary" onclick="goTo(4)">Next section &rarr;</button>
+      </div>
+    </section>
+
+    <!-- ================= SCREEN 4: SC4 - JUSTIFY ================= -->
+    <section class="screen" data-screen="4">
+      <span class="criterion-tag" style="background:var(--d)">Success criterion 4 &middot; Justify</span>
+      <h2 class="section-title">Your turn: make the case</h2>
+      <p class="help">Choose one graphic design career (from Part A, or another you know). Explain which historical era, event, or invention influenced that career the most, and why. Use at least two details from what you learned today.</p>
+
+      <div class="starters">
+        Sentence starters: <code>The career of ______ connects to the ______ era/invention because ______.</code><br>
+        <code>For example, ______.</code> &middot; <code>This shows that ______.</code>
+      </div>
+
+      <textarea id="reflection" placeholder="Type your reflection here..."></textarea>
+      <div class="copy-row">
+        <button class="btn-secondary" onclick="copyReflection()">Copy my reflection</button>
+        <span class="copy-msg" id="copyMsg">Copied — paste it into our Google Classroom submission.</span>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-secondary" onclick="goTo(3)">&larr; Back</button>
+        <button class="btn-primary" onclick="finish()">See my results &rarr;</button>
+      </div>
+    </section>
+
+    <!-- ================= SCREEN 5: RESULTS ================= -->
+    <section class="screen" data-screen="5">
+      <h2 class="section-title">Where am I now?</h2>
+      <div class="score-grid">
+        <div class="score-card"><div class="num" id="scoreIdentify">0/4</div><div class="lbl">Identify (SC1)</div></div>
+        <div class="score-card"><div class="num" id="scoreSequence">&mdash;</div><div class="lbl">Sequence (SC2)</div></div>
+        <div class="score-card"><div class="num" id="scoreMatch">0/10</div><div class="lbl">Career match (SC3)</div></div>
+        <div class="score-card"><div class="num" id="scoreConnect">0/3</div><div class="lbl">Connect (SC3)</div></div>
+      </div>
+
+      <p class="help" style="font-weight:600;">Self-check: how am I doing?</p>
+      <div class="checklist">
+        <label><input type="checkbox" data-sc="1"> I can identify early forms of visual communication and explain their basic characteristics.</label>
+        <label><input type="checkbox" data-sc="2"> I can sequence major developments in graphic design history in chronological order.</label>
+        <label><input type="checkbox" data-sc="3"> I can connect historical design developments to specific graphic design careers today.</label>
+        <label><input type="checkbox" data-sc="4"> I can justify how a specific historical era or invention influenced a graphic design career of my choice.</label>
+      </div>
+
+      <div class="next-note" id="nextNote"></div>
+
+      <div class="submit-box">
+        <strong>Submit your results</strong>
+        <p class="help" style="margin:6px 0 12px;">This opens a form in a new tab with your scores already filled in — just click Submit there. No screenshot needed.</p>
+        <button class="btn-primary" id="submitBtn" onclick="submitResults()">Submit my results</button>
+        <div class="submit-status" id="submitStatus"></div>
+      </div>
+
+      <div class="nav-row" style="justify-content:flex-start;">
+        <button class="btn-secondary" onclick="goTo(1)">&larr; Review any section again</button>
+      </div>
+    </section>
+
+  </main>
+
+</div>
+
+<script>
+  var currentScreen = 0;
+  var totalScreens = 6;
+  var identifyKeys = ['q1','q2','q3','q4'];
+  var connectKeys = ['q5','q6','q7'];
+  var mcResults = {}; // name -> boolean, latest attempt
+  var scores = { matchTotal: 10, seqMistakes: 0 };
+  var lastResults = null;
+
+  /* Google Form receiver — pre-filled link submission (no Apps Script needed) */
+  var FORM_BASE_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdnqlbs-MrdLy49aVq41rI4Re1QBl6BO94W7RIf_U_izQMq2g/viewform';
+  var FORM_ENTRIES = {
+    name: 'entry.684795294',
+    period: 'entry.375358193',
+    identify: 'entry.542907735',
+    seqMistakes: 'entry.454441196',
+    match: 'entry.1236372417',
+    connect: 'entry.651818008',
+    totalPercent: 'entry.959855074',
+    reflection: 'entry.1692808456'
+  };
+
+  function startReview(){
+    var name = document.getElementById('studentName').value.trim();
+    var err = document.getElementById('nameError');
+    if (!name){
+      err.style.display = 'block';
+      document.getElementById('studentName').focus();
+      return;
+    }
+    err.style.display = 'none';
+    goTo(1);
+  }
+
+  function buildDots(){
+    var wrap = document.getElementById('dots');
+    for (var i = 0; i < totalScreens; i++){
+      var d = document.createElement('div');
+      d.className = 'dot';
+      wrap.appendChild(d);
+    }
+  }
+  buildDots();
+
+  function goTo(n){
+    document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('visible'); });
+    document.querySelector('.screen[data-screen="' + n + '"]').classList.add('visible');
+    currentScreen = n;
+    document.getElementById('stepLabel').textContent = (n + 1);
+    document.getElementById('progressFill').style.width = Math.round((n / (totalScreens - 1)) * 100) + '%';
+    var dots = document.querySelectorAll('.dot');
+    dots.forEach(function(d, i){
+      d.classList.toggle('active', i === n);
+      d.classList.toggle('done', i < n);
+    });
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function checkMC(name, correctIndex){
+    var chosen = document.querySelector('input[name="' + name + '"]:checked');
+    var fb = document.getElementById('fb-' + name);
+    var opts = document.querySelectorAll('input[name="' + name + '"]');
+    if (!chosen){
+      fb.textContent = 'Choose an answer first.';
+      fb.className = 'feedback show bad';
+      return;
+    }
+    opts.forEach(function(o){ o.closest('.opt').classList.remove('correct','incorrect'); });
+    var isCorrect = parseInt(chosen.value, 10) === correctIndex;
+    chosen.closest('.opt').classList.add(isCorrect ? 'correct' : 'incorrect');
+    if (!isCorrect){
+      opts.forEach(function(o){
+        if (parseInt(o.value, 10) === correctIndex) o.closest('.opt').classList.add('correct');
+      });
+    }
+    mcResults[name] = isCorrect;
+    var feedbackText = {
+      q1: 'Cuneiform was pressed into soft clay tablets with a reed stylus, then dried or baked to preserve the record.',
+      q2: 'Early artists ground minerals like ochre and charcoal into pigment, sometimes mixed with animal fat, to paint directly on cave walls.',
+      q3: 'False — cave paintings (some over 17,000 years old) came long before cuneiform (c. 3200 BCE). They\'re considered the earliest known visual communication.',
+      q4: 'Historians believe cave paintings served storytelling, ritual, and record-keeping purposes long before writing existed.',
+      q5: 'Digital tools from 1984 onward (computers, then design and prototyping software) made interactive digital design possible, giving rise to UX/UI as a career.',
+      q6: 'Movable type and the printing press made mass-produced, laid-out pages possible — the direct ancestor of editorial and publication design.',
+      q7: 'Cave paintings are the earliest known visual storytelling — illustrators and muralists carry that same tradition forward today.'
+    };
+    fb.textContent = (isCorrect ? 'Correct! ' : 'Not quite. ') + feedbackText[name];
+    fb.className = 'feedback show ' + (isCorrect ? 'good' : 'bad');
+  }
+
+  /* ---------- Sequencing activity ---------- */
+  var seqItems = [
+    { id:'cave', label:'Cave Paintings', note:'~17,000 BCE', desc:'Some of the earliest known images, painted with natural pigments to tell stories and record events.', order:0 },
+    { id:'a', label:'Origins of Written & Printed Communication', note:'c. 3200 BCE\u20131455', desc:'Writing systems, paper, and the printing press made recording and sharing information possible for the first time.', order:1 },
+    { id:'b', label:'Print Innovation & the Industrial Age', note:'1470s\u20131839', desc:'New printing methods and photography let images and text spread further, faster, and in color.', order:2 },
+    { id:'c', label:'Art Movements Emerge', note:'1850s\u20131919', desc:'Design became art \u2014 from handcrafted Arts and Crafts pieces to bold Art Nouveau posters and the founding of the Bauhaus.', order:3 },
+    { id:'d', label:'Modernism to Mid-Century Design', note:'1920s\u20131950s/60s', desc:'Grid systems, iconic typefaces, and corporate branding gave design a clean, modern, and strategic new role.', order:4 },
+    { id:'e', label:'The Digital Revolution to Today', note:'1984\u2013present', desc:'Computers and design software moved design onto screens, then into every app and interface we use.', order:5 }
+  ];
+  var seqDisplayOrder = ['d','cave','e','a','c','b'];
+  var seqNextExpected = 0;
+
+  function renderSeq(){
+    var slots = document.getElementById('seqSlots');
+    var tiles = document.getElementById('seqTiles');
+    slots.innerHTML = '';
+    for (var i = 0; i < seqItems.length; i++){
+      var s = document.createElement('div');
+      s.className = 'slot';
+      s.id = 'slot-' + i;
+      s.textContent = i + 1;
+      slots.appendChild(s);
+    }
+    tiles.innerHTML = '';
+    seqDisplayOrder.forEach(function(id){
+      var item = seqItems.find(function(x){ return x.id === id; });
+      var t = document.createElement('div');
+      t.className = 'tile seq-tile';
+      t.id = 'tile-' + id;
+      t.setAttribute('tabindex', '0');
+      t.innerHTML = '<div class="tile-main"><span>' + item.label + '</span><span class="tile-note">' + item.note + '</span></div><div class="tile-desc">' + item.desc + '</div>';
+      t.onclick = function(itemId){ return function(){ handleSeqClick(itemId); }; }(id);
+      t.onkeydown = function(itemId){ return function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSeqClick(itemId); } }; }(id);
+      tiles.appendChild(t);
+    });
+    document.getElementById('seqStatus').textContent = 'Tap the earliest event first.';
+  }
+
+  function handleSeqClick(id){
+    var tile = document.getElementById('tile-' + id);
+    if (tile.classList.contains('locked')) return;
+    var item = seqItems.find(function(x){ return x.id === id; });
+    if (item.order === seqNextExpected){
+      tile.classList.add('locked');
+      document.getElementById('slot-' + seqNextExpected).classList.add('filled');
+      document.getElementById('slot-' + seqNextExpected).textContent = '\u2713';
+      seqNextExpected++;
+      if (seqNextExpected === seqItems.length){
+        document.getElementById('seqStatus').textContent = 'Sequence complete! (' + scores.seqMistakes + ' mistake' + (scores.seqMistakes === 1 ? '' : 's') + ' along the way)';
+        document.getElementById('seqNextBtn').disabled = false;
+      } else {
+        document.getElementById('seqStatus').textContent = 'Nice — keep going.';
+      }
+    } else {
+      scores.seqMistakes++;
+      tile.classList.add('shake');
+      setTimeout(function(){ tile.classList.remove('shake'); }, 350);
+      document.getElementById('seqStatus').textContent = 'Not next yet — think about which came first.';
+    }
+  }
+  renderSeq();
+
+  /* ---------- Career matching activity ---------- */
+  var careers = [
+    { id:'gd', title:'Graphic Designer', desc:'Creates visual concepts using text and images to communicate ideas for print or digital media.' },
+    { id:'ux', title:'UX/UI Designer', desc:'Designs how digital products look and function so they are easy and enjoyable to use.' },
+    { id:'ad', title:'Art Director', desc:'Oversees the visual style and creative direction of a project, guiding a team toward one unified vision.' },
+    { id:'il', title:'Illustrator', desc:'Creates original artwork and imagery, often by hand or digitally, for books, ads, and products.' },
+    { id:'mo', title:'Motion Graphics Designer', desc:'Combines design and animation to create moving visual content for video and digital screens.' },
+    { id:'pk', title:'Packaging Designer', desc:'Designs the visual look, structure, and branding of product packaging.' },
+    { id:'bi', title:'Brand Identity Designer', desc:'Builds the visual foundation of a brand \u2014 logos, color palettes, and style systems that make it recognizable.' },
+    { id:'wd', title:'Web Designer', desc:'Designs the layout, visuals, and user flow of websites so they are functional and easy to navigate.' },
+    { id:'ty', title:'Typographer / Type Designer', desc:'Designs and refines typefaces, and decides how type is used to set tone and hierarchy.' },
+    { id:'pe', title:'Photo Editor / Retoucher', desc:'Edits and enhances photographs for color, composition, and clarity to prepare them for use.' }
+  ];
+  var descDisplayOrder = ['wd','il','pk','gd','ty','ad','mo','bi','pe','ux'];
+  var selectedCareer = null;
+  var matchedCareers = {};
+
+  function renderMatch(){
+    var careerCol = document.getElementById('careerCol');
+    var descCol = document.getElementById('descCol');
+    careerCol.innerHTML = '';
+    descCol.innerHTML = '';
+    careers.forEach(function(c){
+      var t = document.createElement('div');
+      t.className = 'tile';
+      t.id = 'career-' + c.id;
+      t.setAttribute('tabindex', '0');
+      t.textContent = c.title;
+      t.onclick = function(cid){ return function(){ selectCareer(cid); }; }(c.id);
+      careerCol.appendChild(t);
+    });
+    descDisplayOrder.forEach(function(id){
+      var c = careers.find(function(x){ return x.id === id; });
+      var t = document.createElement('div');
+      t.className = 'tile';
+      t.id = 'desc-' + c.id;
+      t.setAttribute('tabindex', '0');
+      t.textContent = c.desc;
+      t.onclick = function(cid){ return function(){ selectDesc(cid); }; }(c.id);
+      descCol.appendChild(t);
+    });
+    document.getElementById('matchStatus').textContent = 'Tap a career, then its matching description.';
+  }
+
+  function selectCareer(id){
+    if (matchedCareers[id]) return;
+    document.querySelectorAll('#careerCol .tile').forEach(function(t){ t.classList.remove('selected'); });
+    document.getElementById('career-' + id).classList.add('selected');
+    selectedCareer = id;
+  }
+
+  function selectDesc(id){
+    if (!selectedCareer) { document.getElementById('matchStatus').textContent = 'Tap a career first, then its description.'; return; }
+    if (matchedCareers[id]) return;
+    var descTile = document.getElementById('desc-' + id);
+    var careerTile = document.getElementById('career-' + selectedCareer);
+    if (id === selectedCareer){
+      descTile.classList.add('locked');
+      careerTile.classList.add('locked');
+      careerTile.classList.remove('selected');
+      matchedCareers[id] = true;
+      selectedCareer = null;
+      var doneCount = Object.keys(matchedCareers).length;
+      document.getElementById('matchStatus').textContent = doneCount === careers.length ? 'All matched! Nice work.' : (doneCount + ' of ' + careers.length + ' matched.');
+    } else {
+      descTile.classList.add('shake');
+      setTimeout(function(){ descTile.classList.remove('shake'); }, 350);
+      document.getElementById('matchStatus').textContent = 'Not a match — try another description.';
+    }
+  }
+  renderMatch();
+
+  /* ---------- Reflection copy ---------- */
+  function copyReflection(){
+    var text = document.getElementById('reflection').value;
+    if (!text.trim()){
+      document.getElementById('copyMsg').style.display = 'inline';
+      document.getElementById('copyMsg').style.color = 'var(--bad)';
+      document.getElementById('copyMsg').textContent = 'Write your reflection first, then copy it.';
+      return;
+    }
+    navigator.clipboard.writeText(text).then(function(){
+      var msg = document.getElementById('copyMsg');
+      msg.style.color = 'var(--good)';
+      msg.textContent = 'Copied — paste it into our Google Classroom submission.';
+      msg.style.display = 'inline';
+    }).catch(function(){
+      var msg = document.getElementById('copyMsg');
+      msg.style.color = 'var(--bad)';
+      msg.textContent = 'Could not copy automatically — select the text and copy it manually.';
+      msg.style.display = 'inline';
+    });
+  }
+
+  /* ---------- Finish / results ---------- */
+  function countCorrect(keys){
+    return keys.reduce(function(sum, k){ return sum + (mcResults[k] ? 1 : 0); }, 0);
+  }
+  function finish(){
+    var identifyScore = countCorrect(identifyKeys);
+    var connectScore = countCorrect(connectKeys);
+    var matchScore = Object.keys(matchedCareers).length;
+
+    document.getElementById('scoreIdentify').textContent = identifyScore + '/' + identifyKeys.length;
+    document.getElementById('scoreSequence').textContent = scores.seqMistakes === 0 ? 'Perfect' : (scores.seqMistakes + ' retr' + (scores.seqMistakes === 1 ? 'y' : 'ies'));
+    document.getElementById('scoreMatch').textContent = matchScore + '/' + scores.matchTotal;
+    document.getElementById('scoreConnect').textContent = connectScore + '/' + connectKeys.length;
+
+    var totalCorrect = identifyScore + matchScore + connectScore;
+    var totalPossible = identifyKeys.length + scores.matchTotal + connectKeys.length;
+    var pct = totalCorrect / totalPossible;
+
+    lastResults = {
+      name: document.getElementById('studentName').value.trim(),
+      period: document.getElementById('studentPeriod').value.trim(),
+      identifyScore: identifyScore,
+      identifyTotal: identifyKeys.length,
+      seqMistakes: scores.seqMistakes,
+      matchScore: matchScore,
+      matchTotal: scores.matchTotal,
+      connectScore: connectScore,
+      connectTotal: connectKeys.length,
+      totalPercent: Math.round(pct * 100),
+      reflection: document.getElementById('reflection').value.trim()
+    };
+
+    var note = document.getElementById('nextNote');
+    if (pct >= 0.9){
+      note.innerHTML = '<strong>Where to next:</strong> Strong work across every success criterion — you\'re ready to move on. Bring your Part 4 reflection to class to share.';
+    } else if (pct >= 0.7){
+      note.innerHTML = '<strong>Where to next:</strong> Solid understanding overall. Look back at any question you missed, check the feedback, and glance at your handout for that item before class.';
+    } else {
+      note.innerHTML = '<strong>Where to next:</strong> Revisit your Unit 1 handout and timeline infographic, especially for the sections that felt tricky, then try this activity again — resourcefulness is part of the process.';
+    }
+    goTo(5);
+  }
+
+  function submitResults(){
+    var status = document.getElementById('submitStatus');
+    if (!lastResults){
+      status.textContent = 'Finish the activity first, then submit.';
+      status.className = 'submit-status bad';
+      return;
+    }
+
+    var params = [
+      FORM_ENTRIES.name + '=' + encodeURIComponent(lastResults.name),
+      FORM_ENTRIES.period + '=' + encodeURIComponent(lastResults.period),
+      FORM_ENTRIES.identify + '=' + encodeURIComponent(lastResults.identifyScore + '/' + lastResults.identifyTotal),
+      FORM_ENTRIES.seqMistakes + '=' + encodeURIComponent(lastResults.seqMistakes),
+      FORM_ENTRIES.match + '=' + encodeURIComponent(lastResults.matchScore + '/' + lastResults.matchTotal),
+      FORM_ENTRIES.connect + '=' + encodeURIComponent(lastResults.connectScore + '/' + lastResults.connectTotal),
+      FORM_ENTRIES.totalPercent + '=' + encodeURIComponent(lastResults.totalPercent + '%'),
+      FORM_ENTRIES.reflection + '=' + encodeURIComponent(lastResults.reflection)
+    ];
+    var url = FORM_BASE_URL + '?usp=pp_url&' + params.join('&');
+
+    // Must open synchronously within the click handler so browsers don't block the popup.
+    var newTab = window.open(url, '_blank');
+    if (newTab){
+      status.textContent = 'A form opened in a new tab with your results filled in \u2014 just click Submit there to finish.';
+      status.className = 'submit-status good';
+    } else {
+      status.textContent = 'Your browser blocked the new tab. Allow pop-ups for this page, then tap Submit again.';
+      status.className = 'submit-status bad';
+    }
+  }
+</script>
+</body>
+</html>
